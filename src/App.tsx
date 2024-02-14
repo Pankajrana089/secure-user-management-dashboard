@@ -1,18 +1,18 @@
 import React, { useState } from "react";
 import logo from "./logo.svg";
 import "./App.css";
-import SignInPage from "./components/SignInPage";
 import SignUpPage from "./components/SignUpPage";
+import SignInPage from "./components/SignInPage";
 
 function App() {
   const [signIn, setSignIn] = useState(false);
   function reg() {
-    return setSignIn(true);
+    return setSignIn(!signIn);
   }
 
   return (
     <div className="App">
-      {signIn ? <SignInPage /> : <SignUpPage register={reg} />}
+      {signIn ? <SignUpPage login={reg} /> : <SignInPage register={reg} />}
     </div>
   );
 }

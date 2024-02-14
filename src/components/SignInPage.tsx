@@ -1,10 +1,15 @@
-import React, { useState, ChangeEvent, FormEvent } from "react";
+import React, { useState, ChangeEvent, FormEvent, MouseEvent } from "react";
 import DashboardPage from "./DashboardPage";
 
-const SignInPage = () => {
+interface SignInPageProps {
+  register: () => void; // Define the type of the register prop
+}
+
+const SignInPage: React.FC<SignInPageProps> = ({ register }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginStatus, setLoginStatus] = useState(false);
+  const [loginFailStatus, setLoginFailStatus] = useState(false);
 
   const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -16,8 +21,10 @@ const SignInPage = () => {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Here you would typically call your authentication service
-    var data = JSON.stringify({ email: email, password: password });
+    var data = JSON.stringify({
+      email: email,
+      password: password,
+    });
     var xhr = new XMLHttpRequest();
     xhr.open("POST", "https://reqres.in/api/login", true);
     xhr.setRequestHeader("Content-type", "application/json");
@@ -25,8 +32,14 @@ const SignInPage = () => {
     xhr.onload = function () {
       if (xhr.status.toString()[0] === "2") {
         setLoginStatus(true);
+      } else if (xhr.status.toString()[0] !== "2") {
+        setLoginFailStatus(true);
       }
     };
+  };
+  const userRegister = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    register();
   };
 
   return (
@@ -35,7 +48,7 @@ const SignInPage = () => {
         <DashboardPage userName={email.toString()} />
       </div>
       <div className={loginStatus ? "display" : ""}>
-        <h2>Sign In</h2>
+        <h2>Login In</h2>
         <form onSubmit={handleSubmit}>
           <div>
             <label>Email:</label>
@@ -49,8 +62,12 @@ const SignInPage = () => {
               onChange={handlePasswordChange}
             />
           </div>
-          <button type="submit">Sign In</button>
+          <button type="submit">Login</button>
+          <button onClick={userRegister}>Register</button>
         </form>
+        <p className={loginFailStatus ? "" : "display"}>
+          Try Again! use email id with @reqres.in
+        </p>
       </div>
     </>
   );
